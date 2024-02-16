@@ -13,4 +13,28 @@ public record AppointmentSuggestionRestDTO(
         LocalDateTime end,
         Set<LocalDateTime> possibleAppointmentStarts
 ) {
+    @Override
+    public UUID workShopId() {
+        return workShopId;
+    }
+
+    @Override
+    public WorkShopOffer workShopOffer() {
+        return workShopOffer;
+    }
+
+    @Override
+    public LocalDateTime start() {
+        return start;
+    }
+
+    @Override
+    public LocalDateTime end() {
+        return end;
+    }
+
+    @Override
+    public Set<LocalDateTime> possibleAppointmentStarts() {
+        return possibleAppointmentStarts;
+    }
 }

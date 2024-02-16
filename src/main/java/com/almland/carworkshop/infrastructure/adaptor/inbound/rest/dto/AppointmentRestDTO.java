@@ -28,4 +28,16 @@ public class AppointmentRestDTO {
             return new AppointmentRestDTO(this);
         }
     }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
+    }
+
+    public String getWorkShopOffer() {
+        return workShopOffer;
+    }
 }
