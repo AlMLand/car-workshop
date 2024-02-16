@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: car_workshop
+  datasource:
+    url: jdbc:postgresql://localhost:5432/car_workshop
+    username: alex
+    password: alex
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:/db/changelog/master-changelog.yaml

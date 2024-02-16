@@ -1,0 +1,92 @@
+databaseChangeLog:
+  - property:
+      name: uuid_type
+      value: uuid
+      dbms: postgresql
+  - changeSet:
+      id: 1
+      author: almland
+      changes:
+        - createTable:
+            tableName: work_shop
+            columns:
+              - column:
+                  name: work_shop_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: max_parallel_appointments
+                  type: integer
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: time_slot
+            columns:
+              - column:
+                  name: time_slot_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fk_appointment_id
+                  type: uuid
+        - createTable:
+            tableName: work_shop_entity_work_shop_offers
+            columns:
+              - column:
+                  name: work_shop_entity_work_shop_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: work_shop_entity_work_shop_offers_fk_name
+                    references: work_shop(work_shop_id)
+              - column:
+                  name: work_shop_offers
+                  type: varchar(255)
+        - createTable:
+            tableName: appointment
+            columns:
+              - column:
+                  name: appointment_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: fk_time_slot_id
+                  type: uuid
+                  constraints:
+                    unique: true
+                    nullable: false
+                    foreignKeyName: appointment_time_slot_fk_name
+                    references: time_slot(time_slot_id)
+              - column:
+                  name: fk_work_shop_id
+                  type: uuid
+                  constraints:
+                    unique: true
+                    nullable: false
+                    foreignKeyName: appointment_work_shop_fk_name
+                    references: work_shop(work_shop_id)
+              - column:
+                  name: work_shop_offer
+                  type: varchar(255)

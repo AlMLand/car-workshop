@@ -22,18 +22,20 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2023.0.0"
+extra["hibernateJpaModelGenVersion"] = "6.4.4.Final"
 
 dependencies {
+    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:${property("hibernateJpaModelGenVersion")}")
+    implementation("org.hibernate.orm:hibernate-jpamodelgen:${property("hibernateJpaModelGenVersion")}")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.liquibase:liquibase-core")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
-    compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
-    annotationProcessor("org.projectlombok:lombok")
+    implementation("org.liquibase:liquibase-core")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql")
 }
 
 dependencyManagement {
