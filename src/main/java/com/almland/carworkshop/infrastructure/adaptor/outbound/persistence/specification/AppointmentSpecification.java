@@ -4,6 +4,7 @@ import com.almland.carworkshop.domain.WorkShopOffer;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.AppointmentEntity;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.AppointmentEntity_;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.TimeSlotEntity_;
+import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.WorkShopEntity_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -11,7 +12,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static jakarta.persistence.criteria.JoinType.LEFT;
 
@@ -25,13 +28,28 @@ public class AppointmentSpecification {
     ) {
         return (root, queryBuilder, criteriaBuilder) -> {
             queryBuilder.distinct(true);
-            return criteriaBuilder.and(
-                    getWorkShopIdPredicate(workShopId, root, criteriaBuilder),
-                    getFromPredicate(from, root, criteriaBuilder),
-                    getUntilPredicate(until, root, criteriaBuilder),
-                    getWorkShopOfferPredicate(workShopOffer, root, criteriaBuilder)
-            );
+            var predicates = getArrayOfPredicates(workShopId, from, until, workShopOffer, root, criteriaBuilder);
+            return criteriaBuilder.and(predicates);
         };
+    }
+
+    private Predicate[] getArrayOfPredicates(
+            UUID workShopId,
+            LocalDateTime from,
+            LocalDateTime until,
+            WorkShopOffer workShopOffer,
+            Root<AppointmentEntity> root,
+            CriteriaBuilder criteriaBuilder
+    ) {
+        return Stream.of(
+                        getWorkShopIdPredicate(workShopId, root, criteriaBuilder),
+                        getFromPredicate(from, root, criteriaBuilder),
+                        getUntilPredicate(until, root, criteriaBuilder),
+                        getWorkShopOfferPredicate(workShopOffer, root, criteriaBuilder)
+                )
+                .filter(Objects::nonNull)
+                .toList()
+                .toArray(new Predicate[0]);
     }
 
     private Predicate getWorkShopOfferPredicate(
@@ -73,6 +91,8 @@ public class AppointmentSpecification {
             Root<AppointmentEntity> root,
             CriteriaBuilder criteriaBuilder
     ) {
-        return criteriaBuilder.equal(root.get(AppointmentEntity_.workShopEntity), workShopId);
+        return criteriaBuilder.equal(
+                root.join(AppointmentEntity_.workShopEntity, LEFT).get(WorkShopEntity_.workShopId), workShopId
+        );
     }
 }
