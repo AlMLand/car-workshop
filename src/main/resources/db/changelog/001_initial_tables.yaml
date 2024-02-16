@@ -49,19 +49,22 @@ databaseChangeLog:
                   name: fk_appointment_id
                   type: uuid
         - createTable:
-            tableName: work_shop_entity_work_shop_offers
+            tableName: work_shop_offer
             columns:
               - column:
-                  name: work_shop_entity_work_shop_id
+                  name: work_shop_id
                   type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
-                    foreignKeyName: work_shop_entity_work_shop_offers_fk_name
+                    foreignKeyName: work_shop_id_fk_name
                     references: work_shop(work_shop_id)
               - column:
-                  name: work_shop_offers
+                  name: offer
                   type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
         - createTable:
             tableName: appointment
             columns:

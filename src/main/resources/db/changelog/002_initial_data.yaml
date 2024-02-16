@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: almland
+      changes:
+        - sql:
+            comment: init tables with dummy data
+            sql: >
+              insert into work_shop(work_shop_id, name, max_parallel_appointments) values('c1b10554-288a-40e8-bf63-1e6d05c893fd', 'workshop-as', 2);
+              insert into work_shop(work_shop_id, name, max_parallel_appointments) values('3a4b1eb3-94fd-4b0b-9460-70e0669adfb9', 'workshop-mb', 3);
+              insert into work_shop_offer(work_shop_id, offer) values('c1b10554-288a-40e8-bf63-1e6d05c893fd', 'MOT');
+              insert into work_shop_offer(work_shop_id, offer) values('c1b10554-288a-40e8-bf63-1e6d05c893fd', 'OIL');
+              insert into work_shop_offer(work_shop_id, offer) values('c1b10554-288a-40e8-bf63-1e6d05c893fd', 'WHE');
+              insert into work_shop_offer(work_shop_id, offer) values('3a4b1eb3-94fd-4b0b-9460-70e0669adfb9', 'OIL');
+              insert into work_shop_offer(work_shop_id, offer) values('3a4b1eb3-94fd-4b0b-9460-70e0669adfb9', 'FIX');
+              insert into work_shop_offer(work_shop_id, offer) values('3a4b1eb3-94fd-4b0b-9460-70e0669adfb9', 'INS');
