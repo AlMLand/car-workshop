@@ -36,12 +36,12 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: end_time
+                  name: start_time
                   type: TIMESTAMP
                   constraints:
                     nullable: false
               - column:
-                  name: start_time
+                  name: end_time
                   type: TIMESTAMP
                   constraints:
                     nullable: false
@@ -86,7 +86,6 @@ databaseChangeLog:
                   name: fk_work_shop_id
                   type: uuid
                   constraints:
-                    unique: true
                     nullable: false
                     foreignKeyName: appointment_work_shop_fk_name
                     references: work_shop(work_shop_id)
