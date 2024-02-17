@@ -1,8 +1,8 @@
 package com.almland.carworkshop.infrastructure.adaptor.inbound.rest;
 
 import com.almland.carworkshop.application.port.inbound.RestPort;
-import com.almland.carworkshop.domain.Offer;
-import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.AppointmentRestDTO;
+import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.request.AppointmentRequestDTO;
+import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentResponseDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.mapper.RestMapper;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @RestController
 @RequestMapping(path = "/werkstatt")
 public class RestAdaptor {
+
     private RestPort restPort;
     private RestMapper restMapper;
 
@@ -33,34 +34,32 @@ public class RestAdaptor {
     }
 
     @PostMapping(path = "/{werkstattId}/termin")
-    public ResponseEntity createAppointment(
+    public ResponseEntity<UUID> createAppointment(
             @PathVariable(name = "werkstattId") UUID workShopId,
-            @RequestBody AppointmentRestDTO appointmentRestDTO
+            @RequestBody AppointmentRequestDTO appointmentRequestDTO
     ) {
-        var appointment = restMapper.mapToAppointment(appointmentRestDTO);
-        if (restPort.createAppointment(workShopId, appointment)) return ResponseEntity.ok().build();
-        else return ResponseEntity.status(CONFLICT).build();
+        var appointment = restMapper.mapToAppointment(workShopId, appointmentRequestDTO);
+        var appointmentId = restPort.createAppointment(workShopId, appointment);
+        return appointmentId != null ?
+                ResponseEntity.ok(appointmentId) :
+                ResponseEntity.status(CONFLICT).build();
     }
 
     @GetMapping(path = "/{werkstattId}/termin")
-    public ResponseEntity<Set<AppointmentRestDTO>> getAllAppointments(
+    public ResponseEntity<Set<AppointmentResponseDTO>> getAllAppointments(
             @PathVariable(name = "werkstattId") UUID workShopId,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime until,
             @RequestParam(required = false) String offer
     ) {
-        var appointments = restPort.getAllAppointments(workShopId, from, until, getOffer(offer));
+        var appointments = restPort.getAllAppointments(workShopId, from, until, restMapper.mapToOffer(offer));
         return appointments.isEmpty() ?
                 ResponseEntity.notFound().build() :
                 ResponseEntity.ok(restMapper.mapToAppointmentDto(appointments));
     }
 
-    private Offer getOffer(String offer) {
-        return offer != null ? Offer.valueOf(offer) : null;
-    }
-
     @GetMapping(path = "/{werkstattId}/termin/{terminId}")
-    public ResponseEntity<AppointmentRestDTO> getAppointment(
+    public ResponseEntity<AppointmentResponseDTO> getAppointment(
             @PathVariable(name = "werkstattId") UUID workShopId,
             @PathVariable(name = "terminId") UUID appointmentId
     ) {

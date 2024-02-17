@@ -1,15 +1,15 @@
-package com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto;
+package com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class AppointmentRestDTO {
+public class AppointmentResponseDTO {
     private UUID workShopId;
     private LocalDateTime start;
     private LocalDateTime end;
     private String workShopOffer;
 
-    private AppointmentRestDTO(Builder builder) {
+    private AppointmentResponseDTO(Builder builder) {
         workShopId = builder.workShopId;
         start = builder.start;
         end = builder.end;
@@ -46,8 +46,8 @@ public class AppointmentRestDTO {
             return this;
         }
 
-        public AppointmentRestDTO build() {
-            return new AppointmentRestDTO(this);
+        public AppointmentResponseDTO build() {
+            return new AppointmentResponseDTO(this);
         }
     }
 

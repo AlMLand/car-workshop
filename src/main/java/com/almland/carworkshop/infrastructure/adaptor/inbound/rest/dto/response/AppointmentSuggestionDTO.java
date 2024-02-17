@@ -1,4 +1,4 @@
-package com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto;
+package com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response;
 
 import com.almland.carworkshop.domain.Offer;
 
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-public record AppointmentSuggestionRestDTO(
+public record AppointmentSuggestionDTO(
         UUID workShopId,
         Offer offer,
         LocalDateTime start,

@@ -17,15 +17,16 @@ import java.util.stream.Collectors;
 
 @Component
 public class PersistenceMapper {
+
     public Set<Appointment> mapToAppointment(Collection<AppointmentEntity> appointments) {
         return appointments.stream()
                 .filter(Objects::nonNull)
-                .map(appointmentEntity -> new Appointment(
-                                appointmentEntity.getAppointmentId(),
-                                mapToWorkShop(appointmentEntity.getWorkShopEntity()),
-                                mapToTimeSlot(appointmentEntity.getTimeSlotEntity()),
-                                mapToWorkShopOffer(appointmentEntity.getWorkShopOfferEntity())
-                        )
+                .map(appointmentEntity -> new Appointment.Builder()
+                        .appointmentId(appointmentEntity.getAppointmentId())
+                        .workShop(mapToWorkShop(appointmentEntity.getWorkShopEntity()))
+                        .timeSlot(mapToTimeSlot(appointmentEntity.getTimeSlotEntity()))
+                        .workShopOffer(mapToWorkShopOffer(appointmentEntity.getWorkShopOfferEntity()))
+                        .build()
                 )
                 .collect(Collectors.toSet());
     }
@@ -33,22 +34,22 @@ public class PersistenceMapper {
     private TimeSlot mapToTimeSlot(TimeSlotEntity timeSlotEntity) {
         return timeSlotEntity == null ?
                 null :
-                new TimeSlot(
-                        timeSlotEntity.getTimeSlotId(),
-                        timeSlotEntity.getStartTime(),
-                        timeSlotEntity.getEndTime()
-                );
+                new TimeSlot.Builder()
+                        .timeSlotId(timeSlotEntity.getTimeSlotId())
+                        .startTime(timeSlotEntity.getStartTime())
+                        .endTime(timeSlotEntity.getEndTime())
+                        .build();
     }
 
     private WorkShop mapToWorkShop(WorkShopEntity workShopEntity) {
         return workShopEntity == null ?
                 null :
-                new WorkShop(
-                        workShopEntity.getWorkShopId(),
-                        workShopEntity.getName(),
-                        workShopEntity.getMaxParallelAppointments(),
-                        mapToWorkShopOffers(workShopEntity.getWorkShopOfferEntities())
-                );
+                new WorkShop.Builder()
+                        .workShopId(workShopEntity.getWorkShopId())
+                        .name(workShopEntity.getName())
+                        .maxParallelAppointments(workShopEntity.getMaxParallelAppointments())
+                        .workShopOffers(mapToWorkShopOffers(workShopEntity.getWorkShopOfferEntities()))
+                        .build();
     }
 
     private Set<WorkShopOffer> mapToWorkShopOffers(Collection<WorkShopOfferEntity> workShopOfferEntities) {
@@ -59,6 +60,9 @@ public class PersistenceMapper {
     }
 
     private WorkShopOffer mapToWorkShopOffer(WorkShopOfferEntity workShopOfferEntity) {
-        return new WorkShopOffer(workShopOfferEntity.getOffer(), workShopOfferEntity.getDurationInMin());
+        return new WorkShopOffer.Builder()
+                .offer(workShopOfferEntity.getOffer())
+                .durationInMin(workShopOfferEntity.getDurationInMin())
+                .build();
     }
 }

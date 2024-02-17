@@ -3,16 +3,17 @@ package com.almland.carworkshop.domain;
 import java.util.UUID;
 
 public class Appointment {
+
     private UUID appointmentId;
     private WorkShop workShop;
     private TimeSlot timeSlot;
     private WorkShopOffer workShopOffer;
 
-    public Appointment(UUID appointmentId, WorkShop workShop, TimeSlot timeSlot, WorkShopOffer workShopOffer) {
-        this.appointmentId = appointmentId;
-        this.workShop = workShop;
-        this.timeSlot = timeSlot;
-        this.workShopOffer = workShopOffer;
+    private Appointment(Builder builder) {
+        appointmentId = builder.appointmentId;
+        workShop = builder.workShop;
+        timeSlot = builder.timeSlot;
+        workShopOffer = builder.workShopOffer;
     }
 
     public UUID getAppointmentId() {
@@ -29,5 +30,39 @@ public class Appointment {
 
     public WorkShopOffer getWorkShopOffer() {
         return workShopOffer;
+    }
+
+    public static final class Builder {
+        private UUID appointmentId;
+        private WorkShop workShop;
+        private TimeSlot timeSlot;
+        private WorkShopOffer workShopOffer;
+
+        public Builder() {
+        }
+
+        public Builder appointmentId(UUID val) {
+            appointmentId = val;
+            return this;
+        }
+
+        public Builder workShop(WorkShop val) {
+            workShop = val;
+            return this;
+        }
+
+        public Builder timeSlot(TimeSlot val) {
+            timeSlot = val;
+            return this;
+        }
+
+        public Builder workShopOffer(WorkShopOffer val) {
+            workShopOffer = val;
+            return this;
+        }
+
+        public Appointment build() {
+            return new Appointment(this);
+        }
     }
 }
