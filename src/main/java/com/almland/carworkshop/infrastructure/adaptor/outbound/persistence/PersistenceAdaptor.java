@@ -3,7 +3,7 @@ package com.almland.carworkshop.infrastructure.adaptor.outbound.persistence;
 import com.almland.carworkshop.application.port.outbound.PersistencePort;
 import com.almland.carworkshop.domain.Appointment;
 import com.almland.carworkshop.domain.AppointmentSuggestion;
-import com.almland.carworkshop.domain.WorkShopOffer;
+import com.almland.carworkshop.domain.Offer;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.mapper.PersistenceMapper;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repository.AppointmentRepository;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.specification.AppointmentSpecification;
@@ -54,16 +54,16 @@ public class PersistenceAdaptor implements PersistencePort {
             UUID workShopId,
             LocalDateTime from,
             LocalDateTime until,
-            WorkShopOffer workShopOffer
+            Offer offer
     ) {
         var allAppointments = appointmentRepository
-                .findAll(appointmentSpecification.allAppointmentsBySpecification(workShopId, from, until, workShopOffer));
+                .findAll(appointmentSpecification.allAppointmentsBySpecification(workShopId, from, until, offer));
         return persistenceMapper.mapToAppointment(allAppointments);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, WorkShopOffer workShopOffer, LocalDateTime from, LocalDateTime until) {
+    public Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, Offer offer, LocalDateTime from, LocalDateTime until) {
         return null;
     }
 }

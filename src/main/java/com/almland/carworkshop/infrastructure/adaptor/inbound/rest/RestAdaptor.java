@@ -1,7 +1,7 @@
 package com.almland.carworkshop.infrastructure.adaptor.inbound.rest;
 
 import com.almland.carworkshop.application.port.inbound.RestPort;
-import com.almland.carworkshop.domain.WorkShopOffer;
+import com.almland.carworkshop.domain.Offer;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.AppointmentRestDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.mapper.RestMapper;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -47,9 +47,9 @@ public class RestAdaptor {
             @PathVariable(name = "werkstattId") UUID workShopId,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime until,
-            @RequestParam(required = false) WorkShopOffer workShopOffer
+            @RequestParam(required = false) Offer offer
     ) {
-        var appointments = restPort.getAllAppointments(workShopId, from, until, workShopOffer);
+        var appointments = restPort.getAllAppointments(workShopId, from, until, offer);
         return appointments.isEmpty() ?
                 ResponseEntity.notFound().build() :
                 ResponseEntity.ok(restMapper.mapToAppointmentDto(appointments));

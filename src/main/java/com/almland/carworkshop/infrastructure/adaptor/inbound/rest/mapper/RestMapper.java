@@ -16,7 +16,7 @@ public class RestMapper {
                         .workShopId(appointment.getAppointmentId())
                         .start(appointment.getTimeSlot().getStartTime())
                         .end(appointment.getTimeSlot().getEndTime())
-                        .workShopOffer(appointment.getWorkShopOffer().name())
+                        .workShopOffer(appointment.getWorkShopOffer().getOffer().name())
                         .build()
                 ).collect(Collectors.toSet());
     }

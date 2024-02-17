@@ -4,7 +4,7 @@ import com.almland.carworkshop.application.port.inbound.RestPort;
 import com.almland.carworkshop.application.port.outbound.PersistencePort;
 import com.almland.carworkshop.domain.Appointment;
 import com.almland.carworkshop.domain.AppointmentSuggestion;
-import com.almland.carworkshop.domain.WorkShopOffer;
+import com.almland.carworkshop.domain.Offer;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -34,13 +34,13 @@ public class WorkShopService implements RestPort {
             UUID workShopId,
             LocalDateTime from,
             LocalDateTime until,
-            WorkShopOffer workShopOffer
+            Offer offer
     ) {
-        return persistencePort.getAllAppointments(workShopId, from, until, workShopOffer);
+        return persistencePort.getAllAppointments(workShopId, from, until, offer);
     }
 
     @Override
-    public Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, WorkShopOffer workShopOffer, LocalDateTime from, LocalDateTime until) {
+    public Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, Offer offer, LocalDateTime from, LocalDateTime until) {
         return null;
     }
 }

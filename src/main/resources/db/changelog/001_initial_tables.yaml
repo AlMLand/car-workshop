@@ -52,19 +52,28 @@ databaseChangeLog:
             tableName: work_shop_offer
             columns:
               - column:
-                  name: work_shop_id
+                  name: work_shop_offer_id
                   type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
-                    foreignKeyName: work_shop_id_fk_name
-                    references: work_shop(work_shop_id)
               - column:
                   name: offer
                   type: varchar(255)
                   constraints:
-                    primaryKey: true
                     nullable: false
+              - column:
+                  name: duration_in_min
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fk_work_shop_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: work_shop_fk_name
+                    references: work_shop(work_shop_id)
         - createTable:
             tableName: appointment
             columns:
@@ -75,20 +84,24 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
+                  name: fk_work_shop_offer_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: work_shop_offer_fk_name
+                    references: work_shop_offer(work_shop_offer_id)
+              - column:
                   name: fk_time_slot_id
                   type: uuid
                   constraints:
                     unique: true
                     nullable: false
-                    foreignKeyName: appointment_time_slot_fk_name
+                    foreignKeyName: time_slot_fk_name
                     references: time_slot(time_slot_id)
               - column:
                   name: fk_work_shop_id
                   type: uuid
                   constraints:
                     nullable: false
-                    foreignKeyName: appointment_work_shop_fk_name
+                    foreignKeyName: work_shop_fk_name
                     references: work_shop(work_shop_id)
-              - column:
-                  name: work_shop_offer
-                  type: varchar(255)

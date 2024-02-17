@@ -1,6 +1,6 @@
 package com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto;
 
-import com.almland.carworkshop.domain.WorkShopOffer;
+import com.almland.carworkshop.domain.Offer;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record AppointmentSuggestionRestDTO(
         UUID workShopId,
-        WorkShopOffer workShopOffer,
+        Offer offer,
         LocalDateTime start,
         LocalDateTime end,
         Set<LocalDateTime> possibleAppointmentStarts
@@ -18,9 +18,8 @@ public record AppointmentSuggestionRestDTO(
         return workShopId;
     }
 
-    @Override
-    public WorkShopOffer workShopOffer() {
-        return workShopOffer;
+    public Offer offer() {
+        return offer;
     }
 
     @Override

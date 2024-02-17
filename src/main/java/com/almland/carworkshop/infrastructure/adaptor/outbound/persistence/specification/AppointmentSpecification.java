@@ -1,10 +1,11 @@
 package com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.specification;
 
-import com.almland.carworkshop.domain.WorkShopOffer;
+import com.almland.carworkshop.domain.Offer;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.AppointmentEntity;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.AppointmentEntity_;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.TimeSlotEntity_;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.WorkShopEntity_;
+import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity.WorkShopOfferEntity_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -24,11 +25,11 @@ public class AppointmentSpecification {
             UUID workShopId,
             LocalDateTime from,
             LocalDateTime until,
-            WorkShopOffer workShopOffer
+            Offer offer
     ) {
         return (root, queryBuilder, criteriaBuilder) -> {
             queryBuilder.distinct(true);
-            var predicates = getArrayOfPredicates(workShopId, from, until, workShopOffer, root, criteriaBuilder);
+            var predicates = getArrayOfPredicates(workShopId, from, until, offer, root, criteriaBuilder);
             return criteriaBuilder.and(predicates);
         };
     }
@@ -37,7 +38,7 @@ public class AppointmentSpecification {
             UUID workShopId,
             LocalDateTime from,
             LocalDateTime until,
-            WorkShopOffer workShopOffer,
+            Offer offer,
             Root<AppointmentEntity> root,
             CriteriaBuilder criteriaBuilder
     ) {
@@ -45,7 +46,7 @@ public class AppointmentSpecification {
                         getWorkShopIdPredicate(workShopId, root, criteriaBuilder),
                         getFromPredicate(from, root, criteriaBuilder),
                         getUntilPredicate(until, root, criteriaBuilder),
-                        getWorkShopOfferPredicate(workShopOffer, root, criteriaBuilder)
+                        getWorkShopOfferPredicate(offer, root, criteriaBuilder)
                 )
                 .filter(Objects::nonNull)
                 .toList()
@@ -53,13 +54,16 @@ public class AppointmentSpecification {
     }
 
     private Predicate getWorkShopOfferPredicate(
-            WorkShopOffer workShopOffer,
+            Offer offer,
             Root<AppointmentEntity> root,
             CriteriaBuilder criteriaBuilder
     ) {
-        return workShopOffer == null ?
+        return offer == null ?
                 null :
-                criteriaBuilder.equal(root.get(AppointmentEntity_.workShopOffer), workShopOffer);
+                criteriaBuilder.equal(
+                        root.join(AppointmentEntity_.workShopOfferEntity, LEFT).get(WorkShopOfferEntity_.offer),
+                        offer
+                );
     }
 
     private Predicate getUntilPredicate(
@@ -70,7 +74,8 @@ public class AppointmentSpecification {
         return until == null ?
                 null :
                 criteriaBuilder.lessThanOrEqualTo(
-                        root.join(AppointmentEntity_.timeSlotEntity, LEFT).get(TimeSlotEntity_.startTime), until
+                        root.join(AppointmentEntity_.timeSlotEntity, LEFT).get(TimeSlotEntity_.startTime),
+                        until
                 );
     }
 
@@ -82,7 +87,8 @@ public class AppointmentSpecification {
         return from == null ?
                 null :
                 criteriaBuilder.greaterThanOrEqualTo(
-                        root.join(AppointmentEntity_.timeSlotEntity, LEFT).get(TimeSlotEntity_.startTime), from
+                        root.join(AppointmentEntity_.timeSlotEntity, LEFT).get(TimeSlotEntity_.startTime),
+                        from
                 );
     }
 
@@ -92,7 +98,8 @@ public class AppointmentSpecification {
             CriteriaBuilder criteriaBuilder
     ) {
         return criteriaBuilder.equal(
-                root.join(AppointmentEntity_.workShopEntity, LEFT).get(WorkShopEntity_.workShopId), workShopId
+                root.join(AppointmentEntity_.workShopEntity, LEFT).get(WorkShopEntity_.workShopId),
+                workShopId
         );
     }
 }

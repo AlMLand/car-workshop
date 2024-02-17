@@ -1,13 +1,8 @@
 package com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.entity;
 
-import com.almland.carworkshop.domain.WorkShopOffer;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
@@ -16,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Table(name = "work_shop")
@@ -28,14 +22,21 @@ public class WorkShopEntity {
     String name;
     @Column(nullable = false)
     int maxParallelAppointments;
-    @ElementCollection
-    @CollectionTable(name = "work_shop_offer", joinColumns = @JoinColumn(name = "work_shop_id"))
-    @Column(name = "offer")
-    @Enumerated(STRING)
-    Set<WorkShopOffer> workShopOffers;
-    @OrderBy("workShopOffer ASC")
+    @OrderBy("offer ASC")
+    @OneToMany(cascade = ALL, mappedBy = "workShopEntity")
+    Set<WorkShopOfferEntity> workShopOfferEntities;
     @OneToMany(cascade = ALL, mappedBy = "workShopEntity")
     Set<AppointmentEntity> appointmentEntities;
+
+    void addWorkShopOfferEntity(WorkShopOfferEntity workShopOfferEntity) {
+        this.workShopOfferEntities.add(workShopOfferEntity);
+        workShopOfferEntity.workShopEntity = this;
+    }
+
+    void addAllWorkShopOfferEntities(Set<WorkShopOfferEntity> workShopOfferEntities) {
+        this.workShopOfferEntities.addAll(workShopOfferEntities);
+        workShopOfferEntities.forEach(workShopOfferEntity -> workShopOfferEntity.workShopEntity = this);
+    }
 
     void addAppointmentEntity(AppointmentEntity appointmentEntity) {
         appointmentEntities.add(appointmentEntity);
@@ -59,8 +60,8 @@ public class WorkShopEntity {
         return maxParallelAppointments;
     }
 
-    public Set<WorkShopOffer> getWorkShopOffers() {
-        return workShopOffers;
+    public Set<WorkShopOfferEntity> getWorkShopOfferEntities() {
+        return workShopOfferEntities;
     }
 
     public Set<AppointmentEntity> getAppointmentEntities() {
