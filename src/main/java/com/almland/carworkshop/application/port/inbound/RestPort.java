@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface RestPort {
-    String createAppointment(UUID workShopId, Appointment appointment);
+    boolean createAppointment(UUID workShopId, Appointment appointment);
 
     Appointment getAppointment(UUID workShopId, UUID appointmentId);
 

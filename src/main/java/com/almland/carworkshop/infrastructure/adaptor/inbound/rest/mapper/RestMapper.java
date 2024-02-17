@@ -12,11 +12,16 @@ public class RestMapper {
     public Set<AppointmentRestDTO> mapToAppointmentDto(Set<Appointment> appointments) {
         return appointments
                 .stream()
-                .map(appointment -> new AppointmentRestDTO.Builder(
-                        appointment.getTimeSlot().getStartTime(),
-                        appointment.getTimeSlot().getEndTime(),
-                        appointment.getWorkShopOffer().name()).build()
-                )
-                .collect(Collectors.toSet());
+                .map(appointment -> new AppointmentRestDTO.Builder()
+                        .workShopId(appointment.getAppointmentId())
+                        .start(appointment.getTimeSlot().getStartTime())
+                        .end(appointment.getTimeSlot().getEndTime())
+                        .workShopOffer(appointment.getWorkShopOffer().name())
+                        .build()
+                ).collect(Collectors.toSet());
+    }
+
+    public Appointment mapToAppointment(AppointmentRestDTO appointmentRestDTO) {
+        return null;
     }
 }

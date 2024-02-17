@@ -20,8 +20,8 @@ public class WorkShopService implements RestPort {
     }
 
     @Override
-    public String createAppointment(UUID workShopId, Appointment appointment) {
-        return null;
+    public boolean createAppointment(UUID workShopId, Appointment appointment) {
+        return false;
     }
 
     @Override
