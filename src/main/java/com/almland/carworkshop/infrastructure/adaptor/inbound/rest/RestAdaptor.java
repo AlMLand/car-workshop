@@ -47,15 +47,17 @@ public class RestAdaptor {
             @PathVariable(name = "werkstattId") UUID workShopId,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime until,
-            @RequestParam(required = false) Offer offer
+            @RequestParam(required = false) String offer
     ) {
-        var appointments = restPort.getAllAppointments(workShopId, from, until, offer);
+        var appointments = restPort.getAllAppointments(workShopId, from, until, getOffer(offer));
         return appointments.isEmpty() ?
                 ResponseEntity.notFound().build() :
                 ResponseEntity.ok(restMapper.mapToAppointmentDto(appointments));
     }
 
-    ;
+    private Offer getOffer(String offer) {
+        return offer != null ? Offer.valueOf(offer) : null;
+    }
 
     @GetMapping(path = "/{werkstattId}/termin/{terminId}")
     public ResponseEntity<AppointmentRestDTO> getAppointment(
