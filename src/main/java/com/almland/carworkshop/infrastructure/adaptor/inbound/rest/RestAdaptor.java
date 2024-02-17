@@ -35,14 +35,14 @@ public class RestAdaptor {
     }
 
     @GetMapping(path = "/{werkstattId}/terminvorschlag/")
-    public Set<AppointmentSuggestionResponseDTO> getAppointmentSuggestions(
+    public ResponseEntity<Set<AppointmentSuggestionResponseDTO>> getAppointmentSuggestions(
             @PathVariable(name = "werkstattId") UUID workShopId,
             @RequestParam UUID workShopOfferId,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime until
     ) {
         var appointmentSuggestions = restPort.getAppointmentSuggestions(workShopId, workShopOfferId, from, until);
-        return restMapper.mapToAppointmentSuggestionDto(appointmentSuggestions);
+        return ResponseEntity.ok(restMapper.mapToAppointmentSuggestionDto(appointmentSuggestions));
     }
 
     @PostMapping(path = "/{werkstattId}/termin")
