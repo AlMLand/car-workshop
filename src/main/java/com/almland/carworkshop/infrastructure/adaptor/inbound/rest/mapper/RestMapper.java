@@ -7,6 +7,7 @@ import com.almland.carworkshop.domain.WorkShop;
 import com.almland.carworkshop.domain.WorkShopOffer;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.request.AppointmentRequestDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentResponseDTO;
+import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentSuggestionResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -47,5 +48,17 @@ public class RestMapper {
 
     public Offer mapToOffer(String offer) {
         return offer != null ? Offer.valueOf(offer) : null;
+    }
+
+    public Set<AppointmentSuggestionResponseDTO> mapToAppointmentSuggestionDto(Set<Appointment> appointments) {
+//        appointments
+//                .stream()
+//                .map(appointment -> new AppointmentSuggestionResponseDTO.Builder()
+//                        .workShopId(appointment.getWorkShop().getWorkShopId())
+//                        .workShopOfferId(appointment.getWorkShopOffer().getWorkShopOfferId())
+//                        .possibleTimeSlots(appointments.map)
+//
+//                )
+        return null;
     }
 }

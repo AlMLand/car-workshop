@@ -1,13 +1,15 @@
 package com.almland.carworkshop.domain;
 
+import java.util.UUID;
+
 public class WorkShopOffer {
 
+    private UUID workShopOfferId;
     private Offer offer;
     private int durationInMin;
 
-    private WorkShopOffer(Builder builder) {
-        offer = builder.offer;
-        durationInMin = builder.durationInMin;
+    public UUID getWorkShopOfferId() {
+        return workShopOfferId;
     }
 
     public Offer getOffer() {
@@ -18,11 +20,23 @@ public class WorkShopOffer {
         return durationInMin;
     }
 
+    private WorkShopOffer(Builder builder) {
+        workShopOfferId = builder.workShopOfferId;
+        offer = builder.offer;
+        durationInMin = builder.durationInMin;
+    }
+
     public static final class Builder {
+        private UUID workShopOfferId;
         private Offer offer;
         private int durationInMin;
 
         public Builder() {
+        }
+
+        public Builder workShopOfferId(UUID val) {
+            workShopOfferId = val;
+            return this;
         }
 
         public Builder offer(Offer val) {

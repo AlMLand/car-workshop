@@ -59,8 +59,9 @@ public class PersistenceMapper {
                 .collect(Collectors.toSet());
     }
 
-    private WorkShopOffer mapToWorkShopOffer(WorkShopOfferEntity workShopOfferEntity) {
+    public WorkShopOffer mapToWorkShopOffer(WorkShopOfferEntity workShopOfferEntity) {
         return new WorkShopOffer.Builder()
+                .workShopOfferId(workShopOfferEntity.getWorkShopOfferId())
                 .offer(workShopOfferEntity.getOffer())
                 .durationInMin(workShopOfferEntity.getDurationInMin())
                 .build();

@@ -3,7 +3,6 @@ package com.almland.carworkshop.application.service;
 import com.almland.carworkshop.application.port.inbound.RestPort;
 import com.almland.carworkshop.application.port.outbound.PersistencePort;
 import com.almland.carworkshop.domain.Appointment;
-import com.almland.carworkshop.domain.AppointmentSuggestion;
 import com.almland.carworkshop.domain.Offer;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +12,7 @@ import java.util.UUID;
 
 @Transactional
 public class WorkShopService implements RestPort {
+
     private PersistencePort persistencePort;
 
     public WorkShopService(PersistencePort persistencePort) {
@@ -40,7 +40,14 @@ public class WorkShopService implements RestPort {
     }
 
     @Override
-    public Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, Offer offer, LocalDateTime from, LocalDateTime until) {
+    public Set<Appointment> getAppointmentSuggestions(
+            UUID workShopId,
+            UUID workShopOfferId,
+            LocalDateTime from,
+            LocalDateTime until
+    ) {
+        var workShopOffer = persistencePort.getWorkShopOffer(workShopOfferId);
+        var availableAppointments = persistencePort.getAllAppointments(workShopId, from, until, null);
         return null;
     }
 }

@@ -3,6 +3,7 @@ package com.almland.carworkshop.infrastructure.adaptor.inbound.rest;
 import com.almland.carworkshop.application.port.inbound.RestPort;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.request.AppointmentRequestDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentResponseDTO;
+import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentSuggestionResponseDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.mapper.RestMapper;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,17 @@ public class RestAdaptor {
     public RestAdaptor(RestPort restPort, RestMapper restMapper) {
         this.restPort = restPort;
         this.restMapper = restMapper;
+    }
+
+    @GetMapping(path = "/{werkstattId}/terminvorschlag/")
+    public Set<AppointmentSuggestionResponseDTO> getAppointmentSuggestions(
+            @PathVariable(name = "werkstattId") UUID workShopId,
+            @RequestParam UUID workShopOfferId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime until
+    ) {
+        var appointmentSuggestions = restPort.getAppointmentSuggestions(workShopId, workShopOfferId, from, until);
+        return restMapper.mapToAppointmentSuggestionDto(appointmentSuggestions);
     }
 
     @PostMapping(path = "/{werkstattId}/termin")

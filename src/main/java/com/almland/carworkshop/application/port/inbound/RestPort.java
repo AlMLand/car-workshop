@@ -1,7 +1,6 @@
 package com.almland.carworkshop.application.port.inbound;
 
 import com.almland.carworkshop.domain.Appointment;
-import com.almland.carworkshop.domain.AppointmentSuggestion;
 import com.almland.carworkshop.domain.Offer;
 
 import java.time.LocalDateTime;
@@ -15,5 +14,5 @@ public interface RestPort {
 
     Set<Appointment> getAllAppointments(UUID workShopId, LocalDateTime from, LocalDateTime until, Offer offer);
 
-    Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, Offer offer, LocalDateTime from, LocalDateTime until);
+    Set<Appointment> getAppointmentSuggestions(UUID workShopId, UUID workShopOfferId, LocalDateTime from, LocalDateTime until);
 }

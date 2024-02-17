@@ -1,8 +1,8 @@
 package com.almland.carworkshop.application.port.outbound;
 
 import com.almland.carworkshop.domain.Appointment;
-import com.almland.carworkshop.domain.AppointmentSuggestion;
 import com.almland.carworkshop.domain.Offer;
+import com.almland.carworkshop.domain.WorkShopOffer;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,5 +15,5 @@ public interface PersistencePort {
 
     Set<Appointment> getAllAppointments(UUID workShopId, LocalDateTime from, LocalDateTime until, Offer offer);
 
-    Set<AppointmentSuggestion> getAppointmentSuggestions(UUID workShopId, Offer offer, LocalDateTime from, LocalDateTime until);
+    WorkShopOffer getWorkShopOffer(UUID workShopOfferId);
 }
