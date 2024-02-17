@@ -62,7 +62,7 @@ public class AppointmentSpecification {
                 null :
                 criteriaBuilder.equal(
                         root.join(AppointmentEntity_.workShopOfferEntity, LEFT).get(WorkShopOfferEntity_.offer),
-                        offer
+                        offer.name()
                 );
     }
 
