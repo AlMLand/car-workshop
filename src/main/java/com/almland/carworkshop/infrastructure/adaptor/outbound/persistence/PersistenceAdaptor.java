@@ -42,7 +42,8 @@ public class PersistenceAdaptor implements PersistencePort {
 
     @Transactional
     @Override
-    public String createAppointment(UUID workShopId, Appointment appointment) {
+    public UUID createAppointment(UUID workShopId, Appointment appointment) {
+        var appointmentEntity = persistenceMapper.mapToAppointmentEntity(appointment);
         return null;
     }
 
@@ -74,6 +75,13 @@ public class PersistenceAdaptor implements PersistencePort {
     @Override
     public WorkShopOffer getWorkShopOffer(UUID workShopOfferId) {
         return persistenceMapper.mapToWorkShopOffer(workShopOfferRepository.getReferenceById(workShopOfferId));
+    }
+
+    @Override
+    public WorkShopOffer getWorkShopOfferByOfferAndWorkShopId(UUID workShopId, Offer offer) {
+        return persistenceMapper.mapToWorkShopOffer(
+                workShopOfferRepository.findByOfferAndWorkShopEntity_WorkShopId(offer, workShopId)
+        );
     }
 
     @Override

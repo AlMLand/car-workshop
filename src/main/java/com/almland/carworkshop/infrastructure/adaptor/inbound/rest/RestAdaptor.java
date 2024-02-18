@@ -57,7 +57,7 @@ public class RestAdaptor {
                 ResponseEntity.status(CONFLICT).build();
     }
 
-    @GetMapping(path = "/{werkstattId}/termin")
+    @GetMapping(path = "/{werkstattId}/termine")
     public ResponseEntity<Set<AppointmentResponseDTO>> getAllAppointments(
             @PathVariable(name = "werkstattId") UUID workShopId,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,

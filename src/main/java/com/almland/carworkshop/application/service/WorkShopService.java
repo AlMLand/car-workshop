@@ -4,6 +4,7 @@ import com.almland.carworkshop.application.port.inbound.RestPort;
 import com.almland.carworkshop.application.port.outbound.PersistencePort;
 import com.almland.carworkshop.domain.Appointment;
 import com.almland.carworkshop.domain.Offer;
+import com.almland.carworkshop.domain.WorkShopOffer;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,32 @@ public class WorkShopService implements RestPort {
 
     @Override
     public UUID createAppointment(UUID workShopId, Appointment appointment) {
-        return null;
+        var workShop = persistencePort.getWorkShopById(workShopId);
+        var availableAppointments = persistencePort.getAllAppointments(
+                workShopId,
+                appointment.getTimeSlot().getStartTime(),
+                appointment.getTimeSlot().getEndTime(),
+                null
+        );
+        var workShopOffer = persistencePort.getWorkShopOfferByOfferAndWorkShopId(
+                workShopId,
+                appointment.getWorkShopOffer().getOffer()
+        );
+        setTimeSlotEnd(appointment, workShopOffer);
+        var isOverlapping = appointmentSuggestionService.isNewAppointmentOverlapping(
+                workShop.getMaxParallelAppointments(),
+                availableAppointments,
+                appointment
+        );
+        return isOverlapping ?
+                null :
+                persistencePort.createAppointment(workShopId, appointment);
+    }
+
+    private void setTimeSlotEnd(Appointment appointment, WorkShopOffer workShopOffer) {
+        appointment
+                .getTimeSlot()
+                .setEndTime(appointment.getTimeSlot().getStartTime().plusMinutes(workShopOffer.getDurationInMin()));
     }
 
     @Override

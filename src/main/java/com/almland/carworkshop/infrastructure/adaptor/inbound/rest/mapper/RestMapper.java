@@ -40,7 +40,6 @@ public class RestMapper {
                         .build())
                 .timeSlot(new TimeSlot.Builder()
                         .startTime(appointmentRequestDTO.getStart())
-                        .endTime(appointmentRequestDTO.getEnd())
                         .build())
                 .workShopOffer(new WorkShopOffer.Builder()
                         .offer(Offer.valueOf(appointmentRequestDTO.getWorkShopOffer()))

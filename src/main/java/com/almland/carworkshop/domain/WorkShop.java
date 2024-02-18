@@ -1,5 +1,6 @@
 package com.almland.carworkshop.domain;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9,6 +10,22 @@ public class WorkShop {
     private String name;
     private int maxParallelAppointments;
     private Set<WorkShopOffer> workShopOffers;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkShop workShop = (WorkShop) o;
+        return maxParallelAppointments == workShop.maxParallelAppointments &&
+                Objects.equals(workShopId, workShop.workShopId) &&
+                Objects.equals(name, workShop.name) &&
+                Objects.equals(workShopOffers, workShop.workShopOffers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(workShopId, name, maxParallelAppointments, workShopOffers);
+    }
 
     private WorkShop(Builder builder) {
         workShopId = builder.workShopId;

@@ -1,6 +1,7 @@
 package com.almland.carworkshop.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class TimeSlot {
@@ -8,6 +9,25 @@ public class TimeSlot {
     private UUID timeSlotId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeSlot timeSlot = (TimeSlot) o;
+        return Objects.equals(timeSlotId, timeSlot.timeSlotId) &&
+                Objects.equals(startTime, timeSlot.startTime) &&
+                Objects.equals(endTime, timeSlot.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeSlotId, startTime, endTime);
+    }
 
     private TimeSlot(Builder builder) {
         timeSlotId = builder.timeSlotId;

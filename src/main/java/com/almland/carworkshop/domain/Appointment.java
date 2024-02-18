@@ -1,5 +1,6 @@
 package com.almland.carworkshop.domain;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Appointment {
@@ -8,6 +9,22 @@ public class Appointment {
     private WorkShop workShop;
     private TimeSlot timeSlot;
     private WorkShopOffer workShopOffer;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Appointment that = (Appointment) o;
+        return Objects.equals(appointmentId, that.appointmentId) &&
+                Objects.equals(workShop, that.workShop) &&
+                Objects.equals(timeSlot, that.timeSlot) &&
+                Objects.equals(workShopOffer, that.workShopOffer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(appointmentId, workShop, timeSlot, workShopOffer);
+    }
 
     private Appointment(Builder builder) {
         appointmentId = builder.appointmentId;

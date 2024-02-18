@@ -90,16 +90,20 @@ public class AppointmentSuggestionService {
                 )
                 .filter(timeSlot ->
                         overlappingIntervals.stream().noneMatch(overlappingTimeSlot ->
-                                ((isTimeSlotStartEqualOverlappingStart(timeSlot, overlappingTimeSlot) ||
-                                        isTimeSlotStartAfterAfterOverlappingStart(timeSlot, overlappingTimeSlot)) &&
-                                        isTimeSlotStartBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) ||
-                                        ((isTimeSlotEndEqualOverlappingEnd(timeSlot, overlappingTimeSlot) ||
-                                                isTimeSlotEndBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) &&
-                                                isTimeSlotEndAfterOverlappingStart(timeSlot, overlappingTimeSlot))
+                                isOverlapping(timeSlot, overlappingTimeSlot)
                         )
                 )
                 .sorted(Comparator.comparing(TimeSlot::getStartTime))
                 .toList();
+    }
+
+    private boolean isOverlapping(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return ((isTimeSlotStartEqualOverlappingStart(timeSlot, overlappingTimeSlot) ||
+                isTimeSlotStartAfterAfterOverlappingStart(timeSlot, overlappingTimeSlot)) &&
+                isTimeSlotStartBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) ||
+                ((isTimeSlotEndEqualOverlappingEnd(timeSlot, overlappingTimeSlot) ||
+                        isTimeSlotEndBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) &&
+                        isTimeSlotEndAfterOverlappingStart(timeSlot, overlappingTimeSlot));
     }
 
     private boolean isTimeSlotEndAfterOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
@@ -228,5 +232,17 @@ public class AppointmentSuggestionService {
                 .map(Appointment::getTimeSlot)
                 .sorted(Comparator.comparing(TimeSlot::getStartTime))
                 .toList();
+    }
+
+    public boolean isNewAppointmentOverlapping(
+            int maxParallelAppointments,
+            Set<Appointment> availableAppointments,
+            Appointment appointment
+    ) {
+        var availableTimeSlots = getAvailableTimeSlots(availableAppointments);
+        var overlappingIntervals = findOverlaps(availableTimeSlots, maxParallelAppointments);
+        return overlappingIntervals.stream().noneMatch(overlappingTimeSlot ->
+                isOverlapping(appointment.getTimeSlot(), overlappingTimeSlot)
+        );
     }
 }

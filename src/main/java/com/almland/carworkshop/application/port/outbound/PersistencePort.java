@@ -11,13 +11,15 @@ import java.util.UUID;
 
 public interface PersistencePort {
 
-    String createAppointment(UUID workShopId, Appointment appointment);
+    UUID createAppointment(UUID workShopId, Appointment appointment);
 
     Appointment getAppointment(UUID workShopId, UUID appointmentId);
 
     Set<Appointment> getAllAppointments(UUID workShopId, LocalDateTime from, LocalDateTime until, Offer offer);
 
     WorkShopOffer getWorkShopOffer(UUID workShopOfferId);
+
+    WorkShopOffer getWorkShopOfferByOfferAndWorkShopId(UUID workShopId, Offer offer);
 
     WorkShop getWorkShopById(UUID workShopId);
 }

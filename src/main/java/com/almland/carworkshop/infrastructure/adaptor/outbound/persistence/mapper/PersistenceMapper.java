@@ -66,4 +66,8 @@ public class PersistenceMapper {
                 .durationInMin(workShopOfferEntity.getDurationInMin())
                 .build();
     }
+
+    public AppointmentEntity mapToAppointmentEntity(Appointment appointment) {
+        return null;
+    }
 }
