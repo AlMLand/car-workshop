@@ -3,10 +3,12 @@ package com.almland.carworkshop.infrastructure.adaptor.outbound.persistence;
 import com.almland.carworkshop.application.port.outbound.PersistencePort;
 import com.almland.carworkshop.domain.Appointment;
 import com.almland.carworkshop.domain.Offer;
+import com.almland.carworkshop.domain.WorkShop;
 import com.almland.carworkshop.domain.WorkShopOffer;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.mapper.PersistenceMapper;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repository.AppointmentRepository;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repository.WorkShopOfferRepository;
+import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repository.WorkShopRepository;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.specification.AppointmentSpecification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,17 +21,20 @@ import java.util.UUID;
 public class PersistenceAdaptor implements PersistencePort {
 
     private PersistenceMapper persistenceMapper;
+    private WorkShopRepository workShopRepository;
     private AppointmentRepository appointmentRepository;
     private WorkShopOfferRepository workShopOfferRepository;
     private AppointmentSpecification appointmentSpecification;
 
     public PersistenceAdaptor(
             PersistenceMapper persistenceMapper,
+            WorkShopRepository workShopRepository,
             AppointmentRepository appointmentRepository,
             WorkShopOfferRepository workShopOfferRepository,
             AppointmentSpecification appointmentSpecification
     ) {
         this.persistenceMapper = persistenceMapper;
+        this.workShopRepository = workShopRepository;
         this.appointmentRepository = appointmentRepository;
         this.workShopOfferRepository = workShopOfferRepository;
         this.appointmentSpecification = appointmentSpecification;
@@ -69,5 +74,10 @@ public class PersistenceAdaptor implements PersistencePort {
     @Override
     public WorkShopOffer getWorkShopOffer(UUID workShopOfferId) {
         return persistenceMapper.mapToWorkShopOffer(workShopOfferRepository.getReferenceById(workShopOfferId));
+    }
+
+    @Override
+    public WorkShop getWorkShopById(UUID workShopId) {
+        return persistenceMapper.mapToWorkShop(workShopRepository.getReferenceById(workShopId));
     }
 }

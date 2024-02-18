@@ -8,8 +8,10 @@ import com.almland.carworkshop.domain.WorkShopOffer;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.request.AppointmentRequestDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentResponseDTO;
 import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.AppointmentSuggestionResponseDTO;
+import com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response.TimeSlotResponseDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -50,15 +52,19 @@ public class RestMapper {
         return offer != null ? Offer.valueOf(offer) : null;
     }
 
-    public Set<AppointmentSuggestionResponseDTO> mapToAppointmentSuggestionDto(Set<Appointment> appointments) {
-//        appointments
-//                .stream()
-//                .map(appointment -> new AppointmentSuggestionResponseDTO.Builder()
-//                        .workShopId(appointment.getWorkShop().getWorkShopId())
-//                        .workShopOfferId(appointment.getWorkShopOffer().getWorkShopOfferId())
-//                        .possibleTimeSlots(appointments.map)
-//
-//                )
-        return null;
+    public AppointmentSuggestionResponseDTO mapToAppointmentSuggestionDto(Set<Appointment> appointments) {
+        var timeSlotSuggestions = appointments.stream()
+                .map(appointment -> new TimeSlotResponseDTO.Builder()
+                        .startTime(appointment.getTimeSlot().getStartTime())
+                        .endTime(appointment.getTimeSlot().getEndTime())
+                        .build())
+                .sorted(Comparator.comparing(TimeSlotResponseDTO::getStartTime))
+                .toList();
+        var appointment = appointments.stream().findFirst().orElseThrow();
+        return new AppointmentSuggestionResponseDTO.Builder()
+                .workShopId(appointment.getWorkShop().getWorkShopId())
+                .workShopOfferId(appointment.getWorkShopOffer().getWorkShopOfferId())
+                .possibleTimeSlots(timeSlotSuggestions)
+                .build();
     }
 }

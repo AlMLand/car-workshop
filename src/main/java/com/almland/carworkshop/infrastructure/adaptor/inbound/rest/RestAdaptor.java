@@ -34,8 +34,8 @@ public class RestAdaptor {
         this.restMapper = restMapper;
     }
 
-    @GetMapping(path = "/{werkstattId}/terminvorschlag/")
-    public ResponseEntity<Set<AppointmentSuggestionResponseDTO>> getAppointmentSuggestions(
+    @GetMapping(path = "/{werkstattId}/terminvorschlag")
+    public ResponseEntity<AppointmentSuggestionResponseDTO> getAppointmentSuggestions(
             @PathVariable(name = "werkstattId") UUID workShopId,
             @RequestParam UUID workShopOfferId,
             @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,

@@ -14,9 +14,11 @@ import java.util.UUID;
 public class WorkShopService implements RestPort {
 
     private PersistencePort persistencePort;
+    private AppointmentSuggestionService appointmentSuggestionService;
 
-    public WorkShopService(PersistencePort persistencePort) {
+    public WorkShopService(PersistencePort persistencePort, AppointmentSuggestionService appointmentSuggestionService) {
         this.persistencePort = persistencePort;
+        this.appointmentSuggestionService = appointmentSuggestionService;
     }
 
     @Override
@@ -46,8 +48,15 @@ public class WorkShopService implements RestPort {
             LocalDateTime from,
             LocalDateTime until
     ) {
+        var workShop = persistencePort.getWorkShopById(workShopId);
         var workShopOffer = persistencePort.getWorkShopOffer(workShopOfferId);
         var availableAppointments = persistencePort.getAllAppointments(workShopId, from, until, null);
-        return null;
+        return appointmentSuggestionService.getAllAppointmentSuggestions(
+                workShopOffer,
+                availableAppointments,
+                workShopId,
+                workShopOfferId,
+                workShop.getMaxParallelAppointments()
+        );
     }
 }

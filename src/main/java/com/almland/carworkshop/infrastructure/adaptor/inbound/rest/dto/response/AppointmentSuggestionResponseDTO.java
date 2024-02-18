@@ -1,13 +1,13 @@
 package com.almland.carworkshop.infrastructure.adaptor.inbound.rest.dto.response;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public class AppointmentSuggestionResponseDTO {
 
     private UUID workShopId;
     private UUID workShopOfferId;
-    private Set<TimeSlotResponseDTO> possibleTimeSlots;
+    private List<TimeSlotResponseDTO> possibleTimeSlots;
 
     private AppointmentSuggestionResponseDTO(Builder builder) {
         workShopId = builder.workShopId;
@@ -23,14 +23,14 @@ public class AppointmentSuggestionResponseDTO {
         return workShopOfferId;
     }
 
-    public Set<TimeSlotResponseDTO> getPossibleTimeSlots() {
+    public List<TimeSlotResponseDTO> getPossibleTimeSlots() {
         return possibleTimeSlots;
     }
 
     public static final class Builder {
         private UUID workShopId;
         private UUID workShopOfferId;
-        private Set<TimeSlotResponseDTO> possibleTimeSlots;
+        private List<TimeSlotResponseDTO> possibleTimeSlots;
 
         public Builder() {
         }
@@ -45,7 +45,7 @@ public class AppointmentSuggestionResponseDTO {
             return this;
         }
 
-        public Builder possibleTimeSlots(Set<TimeSlotResponseDTO> val) {
+        public Builder possibleTimeSlots(List<TimeSlotResponseDTO> val) {
             possibleTimeSlots = val;
             return this;
         }

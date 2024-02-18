@@ -41,7 +41,7 @@ public class PersistenceMapper {
                         .build();
     }
 
-    private WorkShop mapToWorkShop(WorkShopEntity workShopEntity) {
+    public WorkShop mapToWorkShop(WorkShopEntity workShopEntity) {
         return workShopEntity == null ?
                 null :
                 new WorkShop.Builder()
