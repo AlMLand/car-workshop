@@ -99,45 +99,33 @@ public class AppointmentSuggestionService {
     }
 
     boolean isOverlapping(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return ((isTimeSlotStartEqualOverlappingStart(timeSlot, overlappingTimeSlot) ||
-                isTimeSlotStartAfterAfterOverlappingStart(timeSlot, overlappingTimeSlot)) &&
-                isTimeSlotStartBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) ||
-                ((isTimeSlotEndEqualOverlappingEnd(timeSlot, overlappingTimeSlot) ||
-                        isTimeSlotEndBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) &&
-                        isTimeSlotEndAfterOverlappingStart(timeSlot, overlappingTimeSlot)) ||
-                (isTimeSlotStartBeforeOverlappingStart(timeSlot, overlappingTimeSlot) &&
-                        isTimeSlotEndAfterOverlappingEnd(timeSlot, overlappingTimeSlot));
+        return ((isFirstStartEqualSecondStart(timeSlot, overlappingTimeSlot) ||
+                isFirstStartAfterSecondStart(timeSlot, overlappingTimeSlot)) &&
+                isFirstEndBeforeSecondEnd(timeSlot, overlappingTimeSlot)) ||
+                ((isFirstEndEqualSecondEnd(timeSlot, overlappingTimeSlot) ||
+                        isFirstEndBeforeSecondEnd(timeSlot, overlappingTimeSlot)) &&
+                        isFirstEndAfterSecondStart(timeSlot, overlappingTimeSlot)) ||
+                (isFirstStartBeforeSecondStart(timeSlot, overlappingTimeSlot) &&
+                        isFirstEndAfterSecondEnd(timeSlot, overlappingTimeSlot));
     }
 
-    private static boolean isTimeSlotEndAfterOverlappingEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    private static boolean isFirstEndAfterSecondEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return timeSlot.getEndTime().isAfter(overlappingTimeSlot.getEndTime());
     }
 
-    private static boolean isTimeSlotStartBeforeOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    private static boolean isFirstStartBeforeSecondStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return timeSlot.getStartTime().isBefore(overlappingTimeSlot.getStartTime());
     }
 
-    private boolean isTimeSlotEndAfterOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    private boolean isFirstEndAfterSecondStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return isFirstStartAfterSecondStart(timeSlot.getEndTime(), overlappingTimeSlot);
     }
 
-    private boolean isTimeSlotEndBeforeOverlappingEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return isFirstEndBeforeSecondEnd(timeSlot, overlappingTimeSlot);
-    }
-
-    private boolean isTimeSlotEndEqualOverlappingEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    private boolean isFirstEndEqualSecondEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return timeSlot.getEndTime().isEqual(overlappingTimeSlot.getEndTime());
     }
 
-    private boolean isTimeSlotStartBeforeOverlappingEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return isFirstEndBeforeSecondEnd(timeSlot.getStartTime(), overlappingTimeSlot);
-    }
-
-    private boolean isTimeSlotStartAfterAfterOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return isFirstStartAfterSecondStart(timeSlot, overlappingTimeSlot);
-    }
-
-    private boolean isTimeSlotStartEqualOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    private boolean isFirstStartEqualSecondStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return timeSlot.getStartTime().isEqual(overlappingTimeSlot.getStartTime());
     }
 
