@@ -8,8 +8,12 @@ import com.almland.carworkshop.domain.WorkShopOffer;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
 import java.util.UUID;
+
+import static java.time.LocalTime.MAX;
+import static java.time.LocalTime.MIDNIGHT;
 
 @Transactional
 public class WorkShopService implements RestPort {
@@ -25,10 +29,10 @@ public class WorkShopService implements RestPort {
     @Override
     public UUID createAppointment(UUID workShopId, Appointment appointment) {
         var workShop = persistencePort.getWorkShopById(workShopId);
-        var availableAppointments = persistencePort.getAllAppointments(
+        var availableAppointmentsOnWishDay = persistencePort.getAllAppointments(
                 workShopId,
-                appointment.getTimeSlot().getStartTime(),
-                appointment.getTimeSlot().getEndTime(),
+                getEdgeTimeOfWishDay(appointment, MIDNIGHT),
+                getEdgeTimeOfWishDay(appointment, MAX),
                 null
         );
         var workShopOffer = persistencePort.getWorkShopOfferByOfferAndWorkShopId(
@@ -39,7 +43,7 @@ public class WorkShopService implements RestPort {
 
         var allAppointmentSuggestions = appointmentSuggestionService.getAllAppointmentSuggestions(
                 workShopOffer,
-                availableAppointments,
+                availableAppointmentsOnWishDay,
                 workShopId,
                 workShopOffer.getWorkShopOfferId(),
                 workShop.getMaxParallelAppointments()
@@ -48,6 +52,10 @@ public class WorkShopService implements RestPort {
         return allAppointmentSuggestions.stream().anyMatch(suggestion -> isTimeStartEqual(appointment, suggestion)) ?
                 persistencePort.createAppointment(workShopId, appointment, workShopOffer) :
                 null;
+    }
+
+    private LocalDateTime getEdgeTimeOfWishDay(Appointment appointment, LocalTime edgeTime) {
+        return LocalDateTime.of(appointment.getTimeSlot().getStartTime().toLocalDate(), edgeTime);
     }
 
     private boolean isTimeStartEqual(Appointment appointment, Appointment suggestion) {

@@ -12,6 +12,8 @@ import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repos
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.specification.AppointmentSpecification;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import java.util.UUID;
 
 @Service
 public class PersistenceAdaptor implements PersistencePort {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private PersistenceMapper persistenceMapper;
     private WorkShopRepository workShopRepository;
@@ -51,7 +55,9 @@ public class PersistenceAdaptor implements PersistencePort {
         var appointmentEntity = persistenceMapper.mapToAppointmentEntity(workShopEntity, appointment, workShopOffer);
         workShopEntity.addAppointmentEntity(appointmentEntity);
         entityManager.flush();
-        return appointmentEntity.getAppointmentId();
+        var appointmentId = appointmentEntity.getAppointmentId();
+        logger.info("create new appointment id: {}, workshop id: {}", appointmentId, workShopId);
+        return appointmentId;
     }
 
     @Transactional(readOnly = true)
