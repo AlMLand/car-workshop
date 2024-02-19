@@ -12,3 +12,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:/db/changelog/master-changelog.yaml
+
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui.html"
