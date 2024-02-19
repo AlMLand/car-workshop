@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface PersistencePort {
 
-    UUID createAppointment(UUID workShopId, Appointment appointment);
+    UUID createAppointment(UUID workShopId, Appointment appointment, WorkShopOffer workShopOffer);
 
     Appointment getAppointment(UUID workShopId, UUID appointmentId);
 

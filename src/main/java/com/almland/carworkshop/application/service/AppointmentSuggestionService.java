@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,14 +62,14 @@ public class AppointmentSuggestionService {
             List<TimeSlot> timeSlotSuggestions
     ) {
         return timeSlotSuggestions.stream()
-                .map(timeSlot -> new Appointment.Builder()
-                        .workShop(new WorkShop.Builder()
+                .map(timeSlot -> Appointment.builder()
+                        .workShop(WorkShop.builder()
                                 .workShopId(workShopId)
                                 .build())
-                        .workShopOffer(new WorkShopOffer.Builder()
+                        .workShopOffer(WorkShopOffer.builder()
                                 .workShopOfferId(workShopOfferId)
                                 .build())
-                        .timeSlot(new TimeSlot.Builder()
+                        .timeSlot(TimeSlot.builder()
                                 .startTime(timeSlot.getStartTime())
                                 .endTime(timeSlot.getEndTime())
                                 .build())
@@ -83,7 +84,7 @@ public class AppointmentSuggestionService {
             List<TimeSlot> overlappingIntervals
     ) {
         return allPossibleStartTimes.stream()
-                .map(startedTime -> new TimeSlot.Builder()
+                .map(startedTime -> TimeSlot.builder()
                         .startTime(startedTime)
                         .endTime(startedTime.plusMinutes(workShopOffer.getDurationInMin()))
                         .build()
@@ -97,13 +98,23 @@ public class AppointmentSuggestionService {
                 .toList();
     }
 
-    private boolean isOverlapping(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    boolean isOverlapping(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return ((isTimeSlotStartEqualOverlappingStart(timeSlot, overlappingTimeSlot) ||
                 isTimeSlotStartAfterAfterOverlappingStart(timeSlot, overlappingTimeSlot)) &&
                 isTimeSlotStartBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) ||
                 ((isTimeSlotEndEqualOverlappingEnd(timeSlot, overlappingTimeSlot) ||
                         isTimeSlotEndBeforeOverlappingEnd(timeSlot, overlappingTimeSlot)) &&
-                        isTimeSlotEndAfterOverlappingStart(timeSlot, overlappingTimeSlot));
+                        isTimeSlotEndAfterOverlappingStart(timeSlot, overlappingTimeSlot)) ||
+                (isTimeSlotStartBeforeOverlappingStart(timeSlot, overlappingTimeSlot) &&
+                        isTimeSlotEndAfterOverlappingEnd(timeSlot, overlappingTimeSlot));
+    }
+
+    private static boolean isTimeSlotEndAfterOverlappingEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return timeSlot.getEndTime().isAfter(overlappingTimeSlot.getEndTime());
+    }
+
+    private static boolean isTimeSlotStartBeforeOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return timeSlot.getStartTime().isBefore(overlappingTimeSlot.getStartTime());
     }
 
     private boolean isTimeSlotEndAfterOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
@@ -154,7 +165,7 @@ public class AppointmentSuggestionService {
                             timeSlot3.getEndTime();
 
                     if (overlapStart.isBefore(overlapEnd)) {
-                        overlaps.add(new TimeSlot.Builder()
+                        overlaps.add(TimeSlot.builder()
                                 .startTime(overlapStart)
                                 .endTime(overlapEnd)
                                 .build());
@@ -196,7 +207,7 @@ public class AppointmentSuggestionService {
                         timeSlot2.getEndTime();
 
                 if (overlapStart.isBefore(overlapEnd)) {
-                    overlaps.add(new TimeSlot.Builder()
+                    overlaps.add(TimeSlot.builder()
                             .startTime(overlapStart)
                             .endTime(overlapEnd)
                             .build());
@@ -214,10 +225,21 @@ public class AppointmentSuggestionService {
                         )
                 )
                 .reduce(Stream::concat)
-                .orElseThrow()
+                .orElseGet(getActualDate())
                 .reduce(Stream::concat)
                 .orElseThrow()
                 .collect(Collectors.toSet());
+    }
+
+    private Supplier<Stream<Stream<LocalDateTime>>> getActualDate() {
+        return () -> Set.of(LocalDate.now()).stream()
+                .map(date -> HOURS.stream()
+                        .map(hour -> MINUTES.stream()
+                                .map(minute -> LocalDateTime.of(date, hour.plusMinutes(minute)))
+                        )
+                )
+                .reduce(Stream::concat)
+                .get();
     }
 
     private List<LocalDate> getAvailableDates(List<TimeSlot> takenTimeSlots) {
@@ -232,17 +254,5 @@ public class AppointmentSuggestionService {
                 .map(Appointment::getTimeSlot)
                 .sorted(Comparator.comparing(TimeSlot::getStartTime))
                 .toList();
-    }
-
-    public boolean isNewAppointmentOverlapping(
-            int maxParallelAppointments,
-            Set<Appointment> availableAppointments,
-            Appointment appointment
-    ) {
-        var availableTimeSlots = getAvailableTimeSlots(availableAppointments);
-        var overlappingIntervals = findOverlaps(availableTimeSlots, maxParallelAppointments);
-        return overlappingIntervals.stream().noneMatch(overlappingTimeSlot ->
-                isOverlapping(appointment.getTimeSlot(), overlappingTimeSlot)
-        );
     }
 }

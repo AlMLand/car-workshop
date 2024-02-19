@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,7 +22,7 @@ public class PersistenceMapper {
     public Set<Appointment> mapToAppointment(Collection<AppointmentEntity> appointments) {
         return appointments.stream()
                 .filter(Objects::nonNull)
-                .map(appointmentEntity -> new Appointment.Builder()
+                .map(appointmentEntity -> Appointment.builder()
                         .appointmentId(appointmentEntity.getAppointmentId())
                         .workShop(mapToWorkShop(appointmentEntity.getWorkShopEntity()))
                         .timeSlot(mapToTimeSlot(appointmentEntity.getTimeSlotEntity()))
@@ -34,7 +35,7 @@ public class PersistenceMapper {
     private TimeSlot mapToTimeSlot(TimeSlotEntity timeSlotEntity) {
         return timeSlotEntity == null ?
                 null :
-                new TimeSlot.Builder()
+                TimeSlot.builder()
                         .timeSlotId(timeSlotEntity.getTimeSlotId())
                         .startTime(timeSlotEntity.getStartTime())
                         .endTime(timeSlotEntity.getEndTime())
@@ -44,7 +45,7 @@ public class PersistenceMapper {
     public WorkShop mapToWorkShop(WorkShopEntity workShopEntity) {
         return workShopEntity == null ?
                 null :
-                new WorkShop.Builder()
+                WorkShop.builder()
                         .workShopId(workShopEntity.getWorkShopId())
                         .name(workShopEntity.getName())
                         .maxParallelAppointments(workShopEntity.getMaxParallelAppointments())
@@ -60,14 +61,38 @@ public class PersistenceMapper {
     }
 
     public WorkShopOffer mapToWorkShopOffer(WorkShopOfferEntity workShopOfferEntity) {
-        return new WorkShopOffer.Builder()
+        return WorkShopOffer.builder()
                 .workShopOfferId(workShopOfferEntity.getWorkShopOfferId())
                 .offer(workShopOfferEntity.getOffer())
                 .durationInMin(workShopOfferEntity.getDurationInMin())
                 .build();
     }
 
-    public AppointmentEntity mapToAppointmentEntity(Appointment appointment) {
-        return null;
+    public AppointmentEntity mapToAppointmentEntity(
+            WorkShopEntity workShopEntity,
+            Appointment appointment,
+            WorkShopOffer workShopOffer
+    ) {
+        var appointmentId = UUID.randomUUID();
+        return AppointmentEntity.builder()
+                .appointmentId(appointmentId)
+                .workShopOfferEntity(mapToWorkShopOfferEntity(workShopEntity, workShopOffer))
+                .timeSlotEntity(TimeSlotEntity.builder()
+                        .timeSlotId(UUID.randomUUID())
+                        .startTime(appointment.getTimeSlot().getStartTime())
+                        .endTime(appointment.getTimeSlot().getEndTime())
+                        .appointmentId(appointmentId)
+                        .build())
+                .workShopEntity(workShopEntity)
+                .build();
+    }
+
+    private WorkShopOfferEntity mapToWorkShopOfferEntity(WorkShopEntity workShopEntity, WorkShopOffer workShopOffer) {
+        return WorkShopOfferEntity.builder()
+                .workShopOfferId(workShopOffer.getWorkShopOfferId())
+                .offer(workShopOffer.getOffer())
+                .durationInMin(workShopOffer.getDurationInMin())
+                .workShopEntity(workShopEntity)
+                .build();
     }
 }

@@ -36,14 +36,22 @@ public class WorkShopService implements RestPort {
                 appointment.getWorkShopOffer().getOffer()
         );
         setTimeSlotEnd(appointment, workShopOffer);
-        var isOverlapping = appointmentSuggestionService.isNewAppointmentOverlapping(
-                workShop.getMaxParallelAppointments(),
+
+        var allAppointmentSuggestions = appointmentSuggestionService.getAllAppointmentSuggestions(
+                workShopOffer,
                 availableAppointments,
-                appointment
+                workShopId,
+                workShopOffer.getWorkShopOfferId(),
+                workShop.getMaxParallelAppointments()
         );
-        return isOverlapping ?
-                null :
-                persistencePort.createAppointment(workShopId, appointment);
+
+        return allAppointmentSuggestions.stream().anyMatch(suggestion -> isTimeStartEqual(appointment, suggestion)) ?
+                persistencePort.createAppointment(workShopId, appointment, workShopOffer) :
+                null;
+    }
+
+    private boolean isTimeStartEqual(Appointment appointment, Appointment suggestion) {
+        return suggestion.getTimeSlot().getStartTime().equals(appointment.getTimeSlot().getStartTime());
     }
 
     private void setTimeSlotEnd(Appointment appointment, WorkShopOffer workShopOffer) {

@@ -23,7 +23,7 @@ public class RestMapper {
         return appointments
                 .stream()
                 .map(appointment ->
-                        new AppointmentResponseDTO.Builder()
+                        AppointmentResponseDTO.builder()
                                 .workShopId(appointment.getAppointmentId())
                                 .start(appointment.getTimeSlot().getStartTime())
                                 .end(appointment.getTimeSlot().getEndTime())
@@ -34,14 +34,14 @@ public class RestMapper {
     }
 
     public Appointment mapToAppointment(UUID workShopId, AppointmentRequestDTO appointmentRequestDTO) {
-        return new Appointment.Builder()
-                .workShop(new WorkShop.Builder()
+        return Appointment.builder()
+                .workShop(WorkShop.builder()
                         .workShopId(workShopId)
                         .build())
-                .timeSlot(new TimeSlot.Builder()
+                .timeSlot(TimeSlot.builder()
                         .startTime(appointmentRequestDTO.getStart())
                         .build())
-                .workShopOffer(new WorkShopOffer.Builder()
+                .workShopOffer(WorkShopOffer.builder()
                         .offer(Offer.valueOf(appointmentRequestDTO.getWorkShopOffer()))
                         .build())
                 .build();
@@ -53,14 +53,14 @@ public class RestMapper {
 
     public AppointmentSuggestionResponseDTO mapToAppointmentSuggestionDto(Set<Appointment> appointments) {
         var timeSlotSuggestions = appointments.stream()
-                .map(appointment -> new TimeSlotResponseDTO.Builder()
+                .map(appointment -> TimeSlotResponseDTO.builder()
                         .startTime(appointment.getTimeSlot().getStartTime())
                         .endTime(appointment.getTimeSlot().getEndTime())
                         .build())
                 .sorted(Comparator.comparing(TimeSlotResponseDTO::getStartTime))
                 .toList();
         var appointment = appointments.stream().findFirst().orElseThrow();
-        return new AppointmentSuggestionResponseDTO.Builder()
+        return AppointmentSuggestionResponseDTO.builder()
                 .workShopId(appointment.getWorkShop().getWorkShopId())
                 .workShopOfferId(appointment.getWorkShopOffer().getWorkShopOfferId())
                 .possibleTimeSlots(timeSlotSuggestions)

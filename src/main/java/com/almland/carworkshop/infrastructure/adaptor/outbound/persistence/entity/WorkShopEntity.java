@@ -6,12 +6,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.proxy.HibernateProxy;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 import static jakarta.persistence.CascadeType.ALL;
 
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "work_shop")
 public class WorkShopEntity {
@@ -28,43 +38,45 @@ public class WorkShopEntity {
     @OneToMany(cascade = ALL, mappedBy = "workShopEntity")
     Set<AppointmentEntity> appointmentEntities;
 
-    void addWorkShopOfferEntity(WorkShopOfferEntity workShopOfferEntity) {
+    public void addWorkShopOfferEntity(WorkShopOfferEntity workShopOfferEntity) {
         this.workShopOfferEntities.add(workShopOfferEntity);
         workShopOfferEntity.workShopEntity = this;
     }
 
-    void addAllWorkShopOfferEntities(Set<WorkShopOfferEntity> workShopOfferEntities) {
+    public void addAllWorkShopOfferEntities(Set<WorkShopOfferEntity> workShopOfferEntities) {
         this.workShopOfferEntities.addAll(workShopOfferEntities);
         workShopOfferEntities.forEach(workShopOfferEntity -> workShopOfferEntity.workShopEntity = this);
     }
 
-    void addAppointmentEntity(AppointmentEntity appointmentEntity) {
+    public void addAppointmentEntity(AppointmentEntity appointmentEntity) {
         appointmentEntities.add(appointmentEntity);
         appointmentEntity.workShopEntity = this;
     }
 
-    void addAllAppointmentEntities(Set<AppointmentEntity> appointmentEntities) {
+    public void addAllAppointmentEntities(Set<AppointmentEntity> appointmentEntities) {
         this.appointmentEntities.addAll(appointmentEntities);
         appointmentEntities.forEach(appointmentEntity -> appointmentEntity.workShopEntity = this);
     }
 
-    public UUID getWorkShopId() {
-        return workShopId;
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
+                ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() :
+                o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
+                this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        WorkShopEntity that = (WorkShopEntity) o;
+        return getWorkShopId() != null && Objects.equals(getWorkShopId(), that.getWorkShopId());
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getMaxParallelAppointments() {
-        return maxParallelAppointments;
-    }
-
-    public Set<WorkShopOfferEntity> getWorkShopOfferEntities() {
-        return workShopOfferEntities;
-    }
-
-    public Set<AppointmentEntity> getAppointmentEntities() {
-        return appointmentEntities;
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() :
+                getClass().hashCode();
     }
 }

@@ -10,6 +10,8 @@ import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repos
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repository.WorkShopOfferRepository;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.repository.WorkShopRepository;
 import com.almland.carworkshop.infrastructure.adaptor.outbound.persistence.specification.AppointmentSpecification;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,8 @@ public class PersistenceAdaptor implements PersistencePort {
     private AppointmentRepository appointmentRepository;
     private WorkShopOfferRepository workShopOfferRepository;
     private AppointmentSpecification appointmentSpecification;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public PersistenceAdaptor(
             PersistenceMapper persistenceMapper,
@@ -42,9 +46,12 @@ public class PersistenceAdaptor implements PersistencePort {
 
     @Transactional
     @Override
-    public UUID createAppointment(UUID workShopId, Appointment appointment) {
-        var appointmentEntity = persistenceMapper.mapToAppointmentEntity(appointment);
-        return null;
+    public UUID createAppointment(UUID workShopId, Appointment appointment, WorkShopOffer workShopOffer) {
+        var workShopEntity = workShopRepository.getReferenceById(workShopId);
+        var appointmentEntity = persistenceMapper.mapToAppointmentEntity(workShopEntity, appointment, workShopOffer);
+        workShopEntity.addAppointmentEntity(appointmentEntity);
+        entityManager.flush();
+        return appointmentEntity.getAppointmentId();
     }
 
     @Transactional(readOnly = true)
