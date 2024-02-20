@@ -65,11 +65,13 @@ public class PersistenceAdaptor implements PersistencePort {
     public Appointment getAppointment(UUID workShopId, UUID appointmentId) {
         var appointment = appointmentRepository
                 .findByWorkShopEntity_WorkShopIdAndAppointmentId(workShopId, appointmentId);
-        return persistenceMapper
-                .mapToAppointment(Set.of(appointment))
-                .stream()
-                .findFirst()
-                .orElse(null);
+        return appointment == null ?
+                null :
+                persistenceMapper
+                        .mapToAppointment(Set.of(appointment))
+                        .stream()
+                        .findFirst()
+                        .orElseThrow();
     }
 
     @Transactional(readOnly = true)
