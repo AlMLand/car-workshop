@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,7 +42,8 @@ public class AppointmentSuggestionService {
             WorkShopOffer workShopOffer,
             Set<Appointment> availableAppointments,
             UUID workShopId, UUID workShopOfferId,
-            int maxParallelAppointments) {
+            int maxParallelAppointments
+    ) {
         var availableTimeSlots = getAvailableTimeSlots(availableAppointments);
         var dates = getAvailableDates(availableTimeSlots);
         var allPossibleStartTimes = getPossibleStartTimes(dates);
@@ -51,9 +53,11 @@ public class AppointmentSuggestionService {
     }
 
     private List<TimeSlot> findOverlaps(List<TimeSlot> availableTimeSlots, int maxParallelAppointments) {
-        if (maxParallelAppointments == 2) return findOverlapsByMaxTwo(availableTimeSlots);
-        else if (maxParallelAppointments == 3) return findOverlapsByMaxThree(availableTimeSlots);
-        else throw new NotImplementedException("this functionality is yet not implemented");
+        return switch (maxParallelAppointments) {
+            case 2 -> findOverlapsByMaxTwo(availableTimeSlots);
+            case 3 -> findOverlapsByMaxThree(availableTimeSlots);
+            default -> throw new NotImplementedException("this functionality is yet not implemented");
+        };
     }
 
     private Set<Appointment> mapToAppointment(
@@ -78,7 +82,7 @@ public class AppointmentSuggestionService {
                 .collect(Collectors.toSet());
     }
 
-    private List<TimeSlot> getTimeSlotSuggestions(
+    public List<TimeSlot> getTimeSlotSuggestions(
             WorkShopOffer workShopOffer,
             Set<LocalDateTime> allPossibleStartTimes,
             List<TimeSlot> overlappingIntervals
@@ -99,34 +103,31 @@ public class AppointmentSuggestionService {
     }
 
     boolean isOverlapping(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return ((isFirstStartEqualSecondStart(timeSlot, overlappingTimeSlot) ||
-                isFirstStartAfterSecondStart(timeSlot, overlappingTimeSlot)) &&
-                isFirstEndBeforeSecondEnd(timeSlot, overlappingTimeSlot)) ||
-                ((isFirstEndEqualSecondEnd(timeSlot, overlappingTimeSlot) ||
-                        isFirstEndBeforeSecondEnd(timeSlot, overlappingTimeSlot)) &&
-                        isFirstEndAfterSecondStart(timeSlot, overlappingTimeSlot)) ||
-                (isFirstStartBeforeSecondStart(timeSlot, overlappingTimeSlot) &&
-                        isFirstEndAfterSecondEnd(timeSlot, overlappingTimeSlot));
+        return isTimeSlotEndInOverlappingInterval(timeSlot, overlappingTimeSlot) ||
+                isTimeSlotEndEqualOverlappingIntervalEnd(timeSlot, overlappingTimeSlot) ||
+                isTimeSlotStartInOverlappingInterval(timeSlot, overlappingTimeSlot) ||
+                isTimeSlotStartEqualOverlappingStart(timeSlot, overlappingTimeSlot) ||
+                isTimeSlotAroundOverlappingInterval(timeSlot, overlappingTimeSlot);
     }
 
-    private static boolean isFirstEndAfterSecondEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return timeSlot.getEndTime().isAfter(overlappingTimeSlot.getEndTime());
+    private static boolean isTimeSlotAroundOverlappingInterval(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return overlappingTimeSlot.getStartTime().isAfter(timeSlot.getStartTime()) && overlappingTimeSlot.getEndTime().isBefore(timeSlot.getEndTime());
     }
 
-    private static boolean isFirstStartBeforeSecondStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return timeSlot.getStartTime().isBefore(overlappingTimeSlot.getStartTime());
+    private static boolean isTimeSlotStartEqualOverlappingStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return timeSlot.getStartTime().isEqual(overlappingTimeSlot.getStartTime());
     }
 
-    private boolean isFirstEndAfterSecondStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return isFirstStartAfterSecondStart(timeSlot.getEndTime(), overlappingTimeSlot);
+    private static boolean isTimeSlotStartInOverlappingInterval(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return timeSlot.getStartTime().isAfter(overlappingTimeSlot.getStartTime()) && timeSlot.getStartTime().isBefore(overlappingTimeSlot.getEndTime());
     }
 
-    private boolean isFirstEndEqualSecondEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+    private static boolean isTimeSlotEndEqualOverlappingIntervalEnd(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
         return timeSlot.getEndTime().isEqual(overlappingTimeSlot.getEndTime());
     }
 
-    private boolean isFirstStartEqualSecondStart(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
-        return timeSlot.getStartTime().isEqual(overlappingTimeSlot.getStartTime());
+    private static boolean isTimeSlotEndInOverlappingInterval(TimeSlot timeSlot, TimeSlot overlappingTimeSlot) {
+        return timeSlot.getEndTime().isAfter(overlappingTimeSlot.getStartTime()) && timeSlot.getEndTime().isBefore(overlappingTimeSlot.getEndTime());
     }
 
     public List<TimeSlot> findOverlapsByMaxThree(List<TimeSlot> timeSlots) {
@@ -164,22 +165,6 @@ public class AppointmentSuggestionService {
         return overlaps;
     }
 
-    private boolean isFirstEndBeforeSecondEnd(LocalDateTime overlapEnd, TimeSlot timeSlot3) {
-        return overlapEnd.isBefore(timeSlot3.getEndTime());
-    }
-
-    private boolean isFirstStartAfterSecondStart(LocalDateTime overlapStart, TimeSlot timeSlot3) {
-        return overlapStart.isAfter(timeSlot3.getStartTime());
-    }
-
-    private boolean isFirstEndBeforeSecondEnd(TimeSlot timeSlot1, TimeSlot timeslot2) {
-        return isFirstEndBeforeSecondEnd(timeSlot1.getEndTime(), timeslot2);
-    }
-
-    private boolean isFirstStartAfterSecondStart(TimeSlot timeSlot1, TimeSlot timeslot2) {
-        return isFirstStartAfterSecondStart(timeSlot1.getStartTime(), timeslot2);
-    }
-
     private List<TimeSlot> findOverlapsByMaxTwo(List<TimeSlot> timeSlots) {
         var overlaps = new ArrayList<TimeSlot>();
 
@@ -205,7 +190,23 @@ public class AppointmentSuggestionService {
         return overlaps;
     }
 
-    private Set<LocalDateTime> getPossibleStartTimes(List<LocalDate> dates) {
+    private boolean isFirstEndBeforeSecondEnd(LocalDateTime overlapEnd, TimeSlot timeSlot3) {
+        return overlapEnd.isBefore(timeSlot3.getEndTime());
+    }
+
+    private boolean isFirstStartAfterSecondStart(LocalDateTime overlapStart, TimeSlot timeSlot3) {
+        return overlapStart.isAfter(timeSlot3.getStartTime());
+    }
+
+    private boolean isFirstEndBeforeSecondEnd(TimeSlot timeSlot1, TimeSlot timeslot2) {
+        return isFirstEndBeforeSecondEnd(timeSlot1.getEndTime(), timeslot2);
+    }
+
+    private boolean isFirstStartAfterSecondStart(TimeSlot timeSlot1, TimeSlot timeslot2) {
+        return isFirstStartAfterSecondStart(timeSlot1.getStartTime(), timeslot2);
+    }
+
+    public Set<LocalDateTime> getPossibleStartTimes(List<LocalDate> dates) {
         return dates.stream()
                 .map(date -> HOURS.stream()
                         .map(hour -> MINUTES.stream()
@@ -214,20 +215,17 @@ public class AppointmentSuggestionService {
                 )
                 .reduce(Stream::concat)
                 .orElseGet(getActualDate())
-                .reduce(Stream::concat)
-                .orElseThrow()
+                .flatMap(Function.identity())
                 .collect(Collectors.toSet());
     }
 
     private Supplier<Stream<Stream<LocalDateTime>>> getActualDate() {
         return () -> Set.of(LocalDate.now()).stream()
-                .map(date -> HOURS.stream()
+                .flatMap(date -> HOURS.stream()
                         .map(hour -> MINUTES.stream()
                                 .map(minute -> LocalDateTime.of(date, hour.plusMinutes(minute)))
                         )
-                )
-                .reduce(Stream::concat)
-                .get();
+                );
     }
 
     private List<LocalDate> getAvailableDates(List<TimeSlot> takenTimeSlots) {

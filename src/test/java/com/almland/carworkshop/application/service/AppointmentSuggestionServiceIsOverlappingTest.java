@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import static java.time.Month.FEBRUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AppointmentSuggestionServiceTest {
+public class AppointmentSuggestionServiceIsOverlappingTest {
 
     private AppointmentSuggestionService appointmentSuggestionService;
     private TimeSlot valideTimeSlot;
@@ -23,31 +23,31 @@ public class AppointmentSuggestionServiceTest {
     public void setUp() {
         appointmentSuggestionService = new AppointmentSuggestionService();
         overlappingTimeSlot = TimeSlot.builder()
-                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 30, 00))
-                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 30, 00))
+                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 30, 0))
+                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 30, 0))
                 .build();
 
         timeSlotEndIsOverlapping = TimeSlot.builder()
-                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 0, 00))
-                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 0, 00))
+                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 0, 0))
+                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 0, 0))
                 .build();
 
         timeSlotStartIsOverlapping = TimeSlot.builder()
-                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 0, 00))
-                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 11, 0, 00))
+                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 0, 0))
+                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 11, 0, 0))
                 .build();
 
         overlappingTimeSlotInTimeSlot = TimeSlot.builder()
-                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 0, 00))
-                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 11, 0, 00))
+                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 0, 0))
+                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 11, 0, 0))
                 .build();
         timeSlotInOverlappingTimeSlot = TimeSlot.builder()
-                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 45, 00))
-                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 15, 00))
+                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 45, 0))
+                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 15, 0))
                 .build();
         valideTimeSlot = TimeSlot.builder()
-                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 0, 00))
-                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 30, 00))
+                .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 0, 0))
+                .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 30, 0))
                 .build();
     }
 
