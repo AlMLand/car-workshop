@@ -3,12 +3,8 @@ package com.almland.carworkshop.application.service;
 import com.almland.carworkshop.domain.Appointment;
 import com.almland.carworkshop.domain.TimeSlot;
 import com.almland.carworkshop.domain.WorkShopOffer;
-import com.almland.carworkshop.utils.PostgreSqlTestConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,11 +18,8 @@ import static com.almland.carworkshop.domain.Offer.MOT;
 import static java.time.Month.FEBRUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Import(value = PostgreSqlTestConfiguration.class)
 public class AppointmentSuggestionServiceTestTimeSlotSuggestionsTest {
     public static final int COUNT_OF_ALL_SUGGESTIONS_ON_DAY_WITHOUT_OVERLAPPING_INTERVALS = 52;
-    @Autowired
     private AppointmentSuggestionService appointmentSuggestionService;
     private WorkShopOffer workShopOffer;
     private List<TimeSlot> overlappingIntervals;
@@ -35,6 +28,7 @@ public class AppointmentSuggestionServiceTestTimeSlotSuggestionsTest {
 
     @BeforeEach
     public void setUp() {
+        appointmentSuggestionService = new AppointmentSuggestionService(new TimeSlotOverlappingService());
         workShopOffer = WorkShopOffer.builder()
                 .workShopOfferId(UUID.randomUUID())
                 .offer(MOT)
