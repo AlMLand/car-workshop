@@ -9,9 +9,8 @@ import java.time.LocalDateTime;
 import static java.time.Month.FEBRUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AppointmentSuggestionServiceIsOverlappingTest {
+public class TimeSlotOverlappingServiceIsOverlappingTest {
 
-    private AppointmentSuggestionService appointmentSuggestionService;
     private TimeSlot valideTimeSlot;
     private TimeSlot overlappingTimeSlot;
     private TimeSlot timeSlotEndIsOverlapping;
@@ -21,7 +20,6 @@ public class AppointmentSuggestionServiceIsOverlappingTest {
 
     @BeforeEach
     public void setUp() {
-        appointmentSuggestionService = new AppointmentSuggestionService();
         overlappingTimeSlot = TimeSlot.builder()
                 .startTime(LocalDateTime.of(2024, FEBRUARY, 1, 9, 30, 0))
                 .endTime(LocalDateTime.of(2024, FEBRUARY, 1, 10, 30, 0))
@@ -53,31 +51,26 @@ public class AppointmentSuggestionServiceIsOverlappingTest {
 
     @Test
     public void timeSlotEndIsOverlapping() {
-        assertThat(appointmentSuggestionService.isOverlapping(timeSlotEndIsOverlapping, overlappingTimeSlot))
-                .isTrue();
+        assertThat(timeSlotEndIsOverlapping.isOverlapping(overlappingTimeSlot)).isTrue();
     }
 
     @Test
     public void timeSlotStartIsOverlapping() {
-        assertThat(appointmentSuggestionService.isOverlapping(timeSlotStartIsOverlapping, overlappingTimeSlot))
-                .isTrue();
+        assertThat(timeSlotStartIsOverlapping.isOverlapping(overlappingTimeSlot)).isTrue();
     }
 
     @Test
     public void overlappingTimeSlotInTimeSlot() {
-        assertThat(appointmentSuggestionService.isOverlapping(overlappingTimeSlotInTimeSlot, overlappingTimeSlot))
-                .isTrue();
+        assertThat(overlappingTimeSlotInTimeSlot.isOverlapping(overlappingTimeSlot)).isTrue();
     }
 
     @Test
     public void timeSlotInOverlappingTimeSlot() {
-        assertThat(appointmentSuggestionService.isOverlapping(timeSlotInOverlappingTimeSlot, overlappingTimeSlot))
-                .isTrue();
+        assertThat(timeSlotInOverlappingTimeSlot.isOverlapping(overlappingTimeSlot)).isTrue();
     }
 
     @Test
     public void valideTimeSlot() {
-        assertThat(appointmentSuggestionService.isOverlapping(valideTimeSlot, overlappingTimeSlot))
-                .isFalse();
+        assertThat(valideTimeSlot.isOverlapping(overlappingTimeSlot)).isFalse();
     }
 }

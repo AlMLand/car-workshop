@@ -2,6 +2,7 @@ package com.almland.carworkshop.infrastructure.configuration;
 
 import com.almland.carworkshop.application.port.outbound.PersistencePort;
 import com.almland.carworkshop.application.service.AppointmentSuggestionService;
+import com.almland.carworkshop.application.service.TimeSlotOverlappingService;
 import com.almland.carworkshop.application.service.WorkShopService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +11,15 @@ import org.springframework.context.annotation.Configuration;
 public class CarWorkShopBeanConfiguration {
 
     @Bean
-    public AppointmentSuggestionService appointmentSuggestionService() {
-        return new AppointmentSuggestionService();
+    public TimeSlotOverlappingService timeSlotOverlappingService() {
+        return new TimeSlotOverlappingService();
+    }
+
+    @Bean
+    public AppointmentSuggestionService appointmentSuggestionService(
+            TimeSlotOverlappingService timeSlotOverlappingService
+    ) {
+        return new AppointmentSuggestionService(timeSlotOverlappingService);
     }
 
     @Bean

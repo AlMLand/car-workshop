@@ -35,8 +35,10 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-jpamodelgen:${property("hibernateJpaModelGenVersion")}")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
 }
 
 dependencyManagement {
