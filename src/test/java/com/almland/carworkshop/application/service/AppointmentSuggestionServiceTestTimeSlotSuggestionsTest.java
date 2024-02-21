@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AppointmentSuggestionServiceTestTimeSlotSuggestionsTest {
     public static final int COUNT_OF_ALL_SUGGESTIONS_ON_DAY_WITHOUT_OVERLAPPING_INTERVALS = 52;
+    public static final int TWO_DAYS_MULTIPLIER = 2;
     private AppointmentSuggestionService appointmentSuggestionService;
     private WorkShopOffer workShopOffer;
     private List<TimeSlot> overlappingIntervals;
@@ -106,7 +107,8 @@ public class AppointmentSuggestionServiceTestTimeSlotSuggestionsTest {
                 overlappingIntervals
         );
 
-        assertThat(timeSlotSuggestions.size()).isNotEqualTo(COUNT_OF_ALL_SUGGESTIONS_ON_DAY_WITHOUT_OVERLAPPING_INTERVALS * 2);
+        assertThat(timeSlotSuggestions.size())
+                .isNotEqualTo(COUNT_OF_ALL_SUGGESTIONS_ON_DAY_WITHOUT_OVERLAPPING_INTERVALS * TWO_DAYS_MULTIPLIER);
         assertThat(timeSlotSuggestions.size()).isEqualTo(58);
     }
 }
