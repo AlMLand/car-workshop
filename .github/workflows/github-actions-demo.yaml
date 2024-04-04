@@ -26,7 +26,7 @@ jobs:
             test:
              - 'src/test/**'
             namingtest:
-             - 'namingtest/**'
+             - 'namingTest/**'
   write-main-changes:
     name: write when main package is changed
     runs-on: ubuntu-latest
