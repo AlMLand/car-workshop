@@ -12,6 +12,7 @@ jobs:
     outputs:
       main: ${{ steps.changes.outputs.main }}
       test: ${{ steps.changes.outputs.test }}
+      namingtest: ${{ steps.changes.outputs.namingtest }}
     steps:
       - name: checkout the project files
         uses: actions/checkout@v4.1.1
