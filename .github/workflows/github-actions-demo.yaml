@@ -15,7 +15,7 @@ jobs:
       test: ${{ steps.changes.outputs.test }}
     steps:
       - name: checkout the project files
-        uses: actions/checkout@4.1.1
+        uses: actions/checkout@4
       - name: check for project file changes
         uses: dorny/paths-filter@v3.0.2
         id: changes
