@@ -4,8 +4,7 @@ run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
 
 jobs:
   check-file-changes:
