@@ -1,0 +1,66 @@
+name: "CodeQL"
+
+on:
+  push:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  check-file-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      main: ${{ steps.changes.outputs.main }}
+      test: ${{ steps.changes.outputs.test }}
+      namingtest: ${{ steps.changes.outputs.namingtest }}
+    steps:
+      - name: checkout the project files
+        uses: actions/checkout@v4
+      - name: check for project file changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            main:
+             - 'src/main/**'
+            test:
+             - 'src/test/**'
+            namingtest:
+             - 'namingTest/**'
+  analyze:
+    needs: check-file-changes
+    if: ${{
+      needs.check-file-changes.outputs.main == 'true' ||
+      needs.check-file-changes.outputs.test == 'true' ||
+      needs.check-file-changes.outputs.namingtest == 'true'
+      }}
+    name: analyze
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java', 'javascript' ]
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      - name: initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - name: setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'gradle'
+      - name: autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
